@@ -81,6 +81,21 @@ local function set_groups()
     MoreMsg = { fg = colorscheme.syntaxFunction },
     NonText = { fg = utils.shade(colorscheme.editorBackground, 0.30) },
     NormalFloat = { bg = colorscheme.floatingWindowBackground },
+    SagaNormal = {
+      fg = colorscheme.mainText,
+      bg = colorscheme.popupBackground,
+    },
+    SagaBorder = { fg = colorscheme.windowBorder, bg = colorscheme.popupBackground },
+    HoverNormal = { link = 'SagaNormal' },
+    HoverBorder = { link = 'SagaBorder' },
+    ActionPreviewNormal = { link = 'SagaNormal' },
+    ActionPreviewBorder = { link = 'SagaBorder' },
+    DiagnosticNormal = { link = 'SagaNormal' },
+    DiagnosticBorder = { link = 'SagaBorder' },
+    DiagnosticShowNormal = { link = 'SagaNormal' },
+    DiagnosticShowBorder = { link = 'SagaBorder' },
+    TerminalNormal = { link = 'SagaNormal' },
+    TerminalBorder = { link = 'SagaBorder' },
     NormalNC = { link = 'Normal' },
     Pmenu = { link = 'NormalFloat' },
     PmenuSel = { bg = colorscheme.menuOptionBackground },
@@ -100,6 +115,8 @@ local function set_groups()
       fg = colorscheme.inactiveText,
       bg = colorscheme.sidebarBackground,
     },
+    WinBar = { fg = colorscheme.selectedText, bg = bg },
+    WinBarNC = { fg = colorscheme.inactiveText, bg = bg },
     TabLine = {
       bg = colorscheme.sidebarBackground,
       fg = colorscheme.inactiveText,
@@ -320,6 +337,33 @@ local function set_groups()
     ['@label.help'] = { link = '@texcolorscheme.uri' }, -- For help files
     ['@texcolorscheme.uri.html'] = { underline = true }, -- For html
 
+    -- markdown/code blocks should not force a background color
+    ['@markup.raw'] = { bg = 'NONE' },
+    ['@markup.raw.block'] = { bg = 'NONE' },
+    ['@text.literal'] = { bg = 'NONE' },
+    ['@text.literal.block'] = { bg = 'NONE' },
+    markdownCode = { bg = 'NONE' },
+    markdownCodeBlock = { bg = 'NONE' },
+    markdownCodeDelimiter = { bg = 'NONE' },
+    markdownCodeInline = { bg = 'NONE' },
+    RenderMarkdownCode = { bg = 'NONE' },
+    NotifyBackground = { bg = colorscheme.floatingWindowBackground },
+    NotifyINFOIcon = { fg = colorscheme.syntaxFunction },
+    NotifyINFOTitle = { fg = colorscheme.syntaxFunction },
+    NotifyINFOBody = { fg = colorscheme.mainText },
+    NotifyWARNIcon = { fg = colorscheme.warningText },
+    NotifyWARNTitle = { fg = colorscheme.warningText },
+    NotifyWARNBody = { fg = colorscheme.mainText },
+    NotifyERRORIcon = { fg = colorscheme.syntaxError },
+    NotifyERRORTitle = { fg = colorscheme.syntaxError },
+    NotifyERRORBody = { fg = colorscheme.mainText },
+    NotifyDEBUGIcon = { fg = colorscheme.syntaxOperator },
+    NotifyDEBUGTitle = { fg = colorscheme.syntaxOperator },
+    NotifyDEBUGBody = { fg = colorscheme.mainText },
+    NotifyTRACEIcon = { fg = colorscheme.linkText },
+    NotifyTRACETitle = { fg = colorscheme.linkText },
+    NotifyTRACEBody = { fg = colorscheme.mainText },
+
     -- semantic highlighting
     ['@lsp.type.namespace'] = { link = '@namespace' },
     ['@lsp.type.type'] = { link = '@type' },
@@ -360,6 +404,8 @@ function theme.setup(values)
     { __index = vim.tbl_extend('force', config.defaults, values) }
   )
 
+  colorscheme.refresh()
+
   theme.bufferline = { highlights = {} }
   theme.bufferline.highlights = bufferline.highlights(config)
 end
@@ -383,6 +429,7 @@ function theme.colorscheme()
   vim.o.termguicolors = true
   vim.g.colors_name = 'my-theme'
 
+  colorscheme.refresh()
   set_terminal_colors()
   set_groups()
 end

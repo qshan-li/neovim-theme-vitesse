@@ -32,9 +32,8 @@ To configure the plugin, you can call require('my-theme').setup({}), passing the
 
 ```lua
 require('my-theme').setup({
-    -- NOTE: if your configuration sets vim.o.background in your configuration for Neovim,
-    -- the following setting will do nothing, since it'll be overriden.
-    theme = 'dark', -- String: 'dark' or 'light', determines the colorscheme used
+    -- NOTE: 'auto' follows vim.o.background (default is 'dark' in Neovim).
+    theme = 'auto', -- String: 'auto', 'dark', 'light', 'dark-soft', or 'light-soft'
     transparent = false, -- Boolean: Sets the background to transparent
     italics = {
         comments = true, -- Boolean: Italicizes comments
