@@ -1,5 +1,5 @@
-local config = require 'my-theme.config'
-local utils = require 'my-theme.utils'
+local config = require 'vitesse.config'
+local utils = require 'vitesse.utils'
 
 local palettes = {
   dark = {

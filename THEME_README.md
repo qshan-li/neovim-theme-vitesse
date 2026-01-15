@@ -17,21 +17,21 @@
 1. Using `Lazy`:
 
 ```lua
-{ 'my-user/my-theme.nvim' },
+{ 'my-user/vitesse.nvim' },
 ```
 
 2. Using `Packer`:
 
 ```lua
-use 'my-user/my-theme.nvim'
+use 'my-user/vitesse.nvim'
 ```
 
 ## Configuration
 
-To configure the plugin, you can call require('my-theme').setup({}), passing the table with the values in it. The following are the **defaults**:
+To configure the plugin, you can call require('vitesse').setup({}), passing the table with the values in it. The following are the **defaults**:
 
 ```lua
-require('my-theme').setup({
+require('vitesse').setup({
     -- NOTE: 'auto' follows vim.o.background (default is 'dark' in Neovim).
     theme = 'auto', -- String: 'auto', 'dark', 'light', 'dark-soft', or 'light-soft'
     transparent = false, -- Boolean: Sets the background to transparent
@@ -48,7 +48,7 @@ require('my-theme').setup({
 
 - **The `colorscheme()` function**
 
-This function can be used to set the colorscheme in your editor, however, if it doesn't work for you, you can always use `vim.cmd.colorscheme('my-theme')`.
+This function can be used to set the colorscheme in your editor, however, if it doesn't work for you, you can always use `vim.cmd.colorscheme('vitesse')`.
 
 ### Specifics for Some Plugins
 
@@ -58,7 +58,7 @@ To use the theme with [bufferline.nvim](https://github.com/akinsho/bufferline.nv
 
 ```lua
 require('bufferline').setup({
-    highlights = require('my-theme').bufferline.highlights,
+    highlights = require('vitesse').bufferline.highlights,
 })
 ```
 

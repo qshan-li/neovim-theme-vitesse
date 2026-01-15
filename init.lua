@@ -72,7 +72,7 @@ end
 vim.opt.rtp = vim.opt.rtp ^ lazypath
 
 require('lazy').setup {
-  root = vim.fn.stdpath 'data' .. '/my-theme/lazy',
+  root = vim.fn.stdpath 'data' .. '/vitesse/lazy',
   spec = {
     {
       'stevearc/oil.nvim',
@@ -328,7 +328,7 @@ require('lazy').setup {
   },
 }
 
-local theme = require 'my-theme/init'
+local theme = require 'vitesse/init'
 
 theme.setup {
   theme = 'dark',

@@ -1,5 +1,5 @@
-local colorscheme = require 'my-theme.colorscheme'
-local config = require 'my-theme.config'
+local colorscheme = require 'vitesse.colorscheme'
+local config = require 'vitesse.config'
 local theme = {}
 
 local bg = config.transparent and 'NONE' or colorscheme.editorBackground

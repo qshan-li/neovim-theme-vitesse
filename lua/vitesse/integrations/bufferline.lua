@@ -1,4 +1,4 @@
-local colorscheme = require 'my-theme.colorscheme'
+local colorscheme = require 'vitesse.colorscheme'
 
 local M = {}
 
