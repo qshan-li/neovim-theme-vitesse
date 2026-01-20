@@ -36,6 +36,16 @@ local function set_groups()
     utils.shade(colorscheme.syntaxFunction, 0.5, colorscheme.editorBackground)
   local diff_text =
     utils.shade(colorscheme.warningEmphasis, 0.5, colorscheme.editorBackground)
+  local indent_guide = utils.mix(
+    colorscheme.syntaxOperator,
+    colorscheme.editorBackground,
+    0.22
+  )
+  local indent_guide_context = utils.mix(
+    colorscheme.syntaxOperator,
+    colorscheme.editorBackground,
+    0.10
+  )
 
   local groups = {
     -- base
@@ -142,6 +152,13 @@ local function set_groups()
     VisualNOS = { link = 'Visual' },
     WarningMsg = { fg = colorscheme.warningText },
     Whitespace = { fg = colorscheme.syntaxOperator },
+    -- indent guides (indent-blankline/ibl)
+    IndentBlanklineChar = { fg = indent_guide, nocombine = true },
+    IndentBlanklineContextChar = { fg = colorscheme.blue, nocombine = true },
+    IndentBlanklineContextStart = { sp = colorscheme.blue, underline = true },
+    IblIndent = { fg = indent_guide, nocombine = true },
+    IblWhitespace = { fg = indent_guide, nocombine = true },
+    IblScope = { fg = colorscheme.blue, nocombine = true },
     WildMenu = { bg = colorscheme.menuOptionBackground },
     Comment = {
       fg = colorscheme.commentText,
