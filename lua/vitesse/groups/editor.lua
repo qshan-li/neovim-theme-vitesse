@@ -6,7 +6,6 @@ function M.highlights(c, config, utils)
   local diff_delete = utils.shade(c.syntaxError, 0.5, c.editorBackground)
   local diff_change = utils.shade(c.syntaxFunction, 0.5, c.editorBackground)
   local diff_text = utils.shade(c.warningEmphasis, 0.5, c.editorBackground)
-  local indent_guide = utils.mix(c.syntaxOperator, c.editorBackground, 0.22)
 
   return {
     Normal = { fg = c.mainText, bg = bg },
@@ -52,21 +51,15 @@ function M.highlights(c, config, utils)
       bg = c.floatingWindowBackground,
       bold = true,
     },
-    SagaNormal = { fg = c.mainText, bg = c.popupBackground },
-    SagaBorder = { fg = c.windowBorder, bg = c.popupBackground },
-    HoverNormal = { link = 'SagaNormal' },
-    HoverBorder = { link = 'SagaBorder' },
-    ActionPreviewNormal = { link = 'SagaNormal' },
-    ActionPreviewBorder = { link = 'SagaBorder' },
-    DiagnosticNormal = { link = 'SagaNormal' },
-    DiagnosticBorder = { link = 'SagaBorder' },
-    DiagnosticShowNormal = { link = 'SagaNormal' },
-    DiagnosticShowBorder = { link = 'SagaBorder' },
-    TerminalNormal = { link = 'SagaNormal' },
-    TerminalBorder = { link = 'SagaBorder' },
-    NormalNC = config.dim_inactive
-        and { fg = utils.shade(c.mainText, 0.5), bg = bg }
-      or { link = 'Normal' },
+    NormalNC = (function()
+      if not config.dim_inactive then
+        return { link = 'Normal' }
+      end
+      local ratio = type(config.dim_inactive) == 'number'
+          and config.dim_inactive
+        or 0.5
+      return { fg = utils.shade(c.mainText, ratio), bg = bg }
+    end)(),
     Pmenu = { link = 'NormalFloat' },
     PmenuSel = { bg = c.menuOptionBackground },
     PmenuSbar = {
@@ -90,10 +83,26 @@ function M.highlights(c, config, utils)
       bg = utils.mix(c.syntaxFunction, c.editorBackground, 0.30),
       fg = c.editorBackground,
     },
-    SpellBad = { undercurl = true, sp = c.syntaxError },
-    SpellCap = { undercurl = true, sp = c.syntaxFunction },
-    SpellLocal = { undercurl = true, sp = c.syntaxKeyword },
-    SpellRare = { undercurl = true, sp = c.warningText },
+    SpellBad = {
+      undercurl = not config.no_undercurl,
+      underline = config.no_undercurl and not config.no_underline or nil,
+      sp = c.syntaxError,
+    },
+    SpellCap = {
+      undercurl = not config.no_undercurl,
+      underline = config.no_undercurl and not config.no_underline or nil,
+      sp = c.syntaxFunction,
+    },
+    SpellLocal = {
+      undercurl = not config.no_undercurl,
+      underline = config.no_undercurl and not config.no_underline or nil,
+      sp = c.syntaxKeyword,
+    },
+    SpellRare = {
+      undercurl = not config.no_undercurl,
+      underline = config.no_undercurl and not config.no_underline or nil,
+      sp = c.warningText,
+    },
     Title = { fg = c.syntaxFunction },
     Visual = {
       bg = utils.shade(c.syntaxFunction, 0.40, c.editorBackground),
@@ -101,12 +110,6 @@ function M.highlights(c, config, utils)
     VisualNOS = { link = 'Visual' },
     WarningMsg = { fg = c.warningText },
     Whitespace = { fg = c.syntaxOperator },
-    IndentBlanklineChar = { fg = indent_guide, nocombine = true },
-    IndentBlanklineContextChar = { fg = c.blue, nocombine = true },
-    IndentBlanklineContextStart = { sp = c.blue, underline = true },
-    IblIndent = { fg = indent_guide, nocombine = true },
-    IblWhitespace = { fg = indent_guide, nocombine = true },
-    IblScope = { fg = c.blue, nocombine = true },
     WildMenu = { bg = c.menuOptionBackground },
   }
 end

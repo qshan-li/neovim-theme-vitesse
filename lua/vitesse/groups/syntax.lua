@@ -1,12 +1,21 @@
 local M = {}
 
 function M.highlights(c, config, utils)
+  local resolve = utils.resolve_style
+  local comment_style = resolve(config, 'comments')
+  local keyword_style = resolve(config, 'keywords')
+  local string_style = resolve(config, 'strings')
+  local number_style = resolve(config, 'numbers', { bold = true })
+
   return {
-    Comment = { fg = c.commentText, italic = config.italics.comments or false },
+    Comment = { fg = c.commentText, italic = comment_style.italic },
     Constant = { fg = c.syntaxError },
-    String = { fg = c.stringText, italic = config.italics.strings or false },
+    String = { fg = c.stringText, italic = string_style.italic },
     Character = { fg = c.stringText },
-    Number = { fg = c.foregroundEmphasis, bold = true },
+    Number = {
+      fg = c.foregroundEmphasis,
+      bold = number_style.bold,
+    },
     Boolean = { fg = c.syntaxFunction },
     Float = { link = 'Number' },
     Identifier = { fg = c.mainText },
@@ -19,7 +28,10 @@ function M.highlights(c, config, utils)
     Conditional = { fg = c.syntaxError },
     Label = { fg = c.syntaxFunction },
     Operator = { fg = c.syntaxError },
-    Keyword = { link = 'Statement', italic = config.italics.keywords or false },
+    Keyword = {
+      link = 'Statement',
+      italic = keyword_style.italic,
+    },
     Exception = { fg = c.syntaxError },
     PreProc = { link = 'Keyword' },
     Define = { fg = c.syntaxKeyword },
@@ -35,12 +47,12 @@ function M.highlights(c, config, utils)
     Tag = { fg = c.stringText },
     Delimiter = { fg = c.syntaxOperator },
     Debug = { fg = c.specialKeyword },
-    Underlined = { underline = true },
-    Bold = { bold = true },
-    Italic = { italic = true },
+    Underlined = { underline = not config.no_underline },
+    Bold = { bold = not config.no_bold },
+    Italic = { italic = not config.no_italic },
     Ignore = { fg = c.editorBackground },
     Error = { link = 'ErrorMsg' },
-    Todo = { fg = c.warningText, bold = true },
+    Todo = { fg = c.warningText, bold = not config.no_bold },
   }
 end
 
