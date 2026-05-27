@@ -1,13 +1,15 @@
-*vitesse.txt*             Vitesse colorscheme for Neovim
+*vitesse.txt*           Vitesse colorscheme for Neovim
 
-CONTENTS                                                     *vitesse-contents*
+CONTENTS                                                      *vitesse-contents*
 
   1. Introduction .............. |vitesse-introduction|
-  2. Installation .............. |vitesse-installation|
-  3. Configuration ............. |vitesse-configuration|
-  4. Palette ................... |vitesse-palette|
-  5. API ....................... |vitesse-api|
+  2. Requirements .............. |vitesse-requirements|
+  3. Installation .............. |vitesse-installation|
+  4. Configuration ............. |vitesse-configuration|
+  5. Palette ................... |vitesse-palette|
   6. Integrations .............. |vitesse-integrations|
+  7. API ....................... |vitesse-api|
+  8. License ................... |vitesse-license|
 
 ==============================================================================
 1. Introduction                                          *vitesse-introduction*
@@ -17,117 +19,179 @@ Vitesse is a pure Lua Neovim colorscheme implementing the Vitesse palette
 
 Four variants are available: `dark`, `dark-soft`, `light`, `light-soft`.
 
+The theme provides 400+ highlight groups covering core Neovim UI, Treesitter,
+LSP semantic tokens, and diagnostics. It includes 24+ plugin integrations,
+terminal colors (16 ANSI colors), a lualine theme, and treesitter query
+extensions for 15 languages.
+
 ==============================================================================
-2. Installation                                          *vitesse-installation*
+2. Requirements                                          *vitesse-requirements*
+
+- Neovim 0.8+
+
+==============================================================================
+3. Installation                                          *vitesse-installation*
 
 With lazy.nvim: >lua
   {
     'vitesse/vitesse.nvim',
-    opts = {
-      theme = 'auto',       -- 'auto', 'dark', 'dark-soft', 'light', 'light-soft'
-      transparent = false,
-    },
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('vitesse').setup({
+        -- optional config
+      })
+      vim.cmd.colorscheme 'vitesse'
+    end,
   }
 <
-Then run: >vim
-  :colorscheme vitesse
+
+With packer.nvim: >lua
+  use {
+    'vitesse/vitesse.nvim',
+    config = function()
+      require('vitesse').setup({})
+      vim.cmd.colorscheme 'vitesse'
+    end,
+  }
 <
+
 ==============================================================================
-3. Configuration                                        *vitesse-configuration*
+4. Configuration                                        *vitesse-configuration*
 
 Configure via `require('vitesse').setup(values)`. All keys are optional.
 
-  `theme`           string    `'auto'`          Theme variant.
-                            `'dark'` / `'dark-soft'` / `'light'` / `'light-soft'`
-                            `'auto'` follows `vim.o.background`.
+  `theme`             string    `'auto'`        Theme variant.
+                              `'dark'` / `'dark-soft'` / `'light'` / `'light-soft'`
+                              `'auto'` follows `vim.o.background`.
 
-  `transparent`     boolean   `false`           Use transparent background.
+  `transparent`       boolean   `false`         Use transparent background.
 
-  `dim_inactive`    boolean   `false`           Dim non-active windows.
+  `dim_inactive`      boolean   `false`         Dim non-active windows.
 
-  `terminal_colors` boolean   `true`            Set terminal colors.
+  `terminal_colors`   boolean   `true`          Set terminal colors.
 
-  `on_colors`       function  `nil`             Callback to modify palette.
-                            Receives palette table, modify in-place.
-                            >lua
-                              on_colors = function(c)
-                                c.syntaxFunction = '#ff0000'
-                              end
+  `no_italic`         boolean   `false`         Disable all italics.
+
+  `no_bold`           boolean   `false`         Disable all bold.
+
+  `no_underline`      boolean   `false`         Disable all underlines.
+
+  `no_undercurl`      boolean   `false`         Disable all undercurls.
+
+  `italics`           table     (see below)     Control italic usage.
+    `.comments`       boolean   `true`
+    `.keywords`       boolean   `true`
+    `.functions`      boolean   `true`
+    `.strings`        boolean   `true`
+    `.variables`      boolean   `true`
+    `.bufferline`     boolean   `false`
+
+  `styles`            table     (see below)     Per-category style control.
+    `.comments`       table     `{ italic = true }`
+    `.keywords`       table     `{ italic = true }`
+    `.functions`      table     `{}`
+    `.strings`        table     `{}`
+    `.variables`      table     `{}`
+    `.numbers`        table     `{}`
+    `.booleans`       table     `{}`
+    `.types`          table     `{}`
+    `.operators`      table     `{}`
+    `.properties`     table     `{}`
+
+  `on_colors`         function  `nil`           Callback to modify palette.
+                              Receives palette table, modify in-place.
+                              >lua
+                                on_colors = function(c)
+                                  c.syntaxFunction = '#ff0000'
+                                end
 <
 
-  `italics`         table     (see below)       Control italic usage.
-    `.comments`     boolean   `true`
-    `.keywords`     boolean   `true`
-    `.functions`    boolean   `true`
-    `.strings`      boolean   `true`
-    `.variables`    boolean   `true`
-    `.bufferline`   boolean   `false`
-
-  `integrations`    table     (all `true`)      Toggle plugin integrations.
-    `.telescope`    boolean
-    `.gitsigns`     boolean
-    `.which_key`    boolean
-    `.neo_tree`     boolean
-    `.trouble`      boolean
-    `.noice`        boolean
-    `.flash`        boolean
-
-  `overrides`       table|fn  `{}`              Override any highlight group.
-                            Table or function returning table.
-
-==============================================================================
-4. Palette                                                      *vitesse-palette*
-
-Each variant defines these semantic color keys:
-
-  `editorBackground`       Editor background
-  `sidebarBackground`      Sidebar background
-  `popupBackground`        Popup menu background
-  `floatingWindowBackground`  Floating window background
-  `menuOptionBackground`   Selected menu option
-  `mainText`               Primary text
-  `emphasisText`           Emphasized text
-  `commandText`            Command text
-  `inactiveText`           Inactive/disabled text
-  `disabledText`           Very dim text
-  `lineNumberText`         Line number gutter
-  `selectedText`           Selected text
-  `inactiveSelectionText`  Inactive selection text
-  `windowBorder`           Window borders
-  `focusedBorder`          Focused borders
-  `emphasizedBorder`       Emphasized borders
-  `syntaxFunction`         Functions, green
-  `syntaxError`            Errors, red
-  `syntaxKeyword`          Keywords, teal
-  `errorText`              Error text
-  `warningText`            Warning text
-  `linkText`               Links, teal
-  `commentText`            Comments
-  `stringText`             Strings
-  `successText`            Success indicators
-  `warningEmphasis`        Warning emphasis, yellow
-  `specialKeyword`         Special keywords, pink
-  `syntaxOperator`         Operators, gray
-  `foregroundEmphasis`     Foreground emphasis
-  `terminalGray`           Terminal gray
-  `blue`                   Blue accent
-
-==============================================================================
-5. API                                                              *vitesse-api*
-
-`require('vitesse').get_colors()`                        *vitesse.get_colors()*
-  Returns a table of all resolved palette colors for the current theme.
-  Must be called after `setup()` or `colorscheme()`.
-  >lua
-    local colors = require('vitesse').get_colors()
-    vim.api.nvim_set_hl(0, 'MyGroup', { fg = colors.syntaxFunction })
+  `on_highlights`     function  `nil`           Callback to modify highlights.
+                              Receives highlights and colors tables.
+                              >lua
+                                on_highlights = function(hl, c)
+                                  hl.Comment = { fg = c.commentText, italic = true }
+                                end
 <
 
-`require('vitesse').setup(values)`                          *vitesse.setup()*
-  Merge user configuration. See |vitesse-configuration|.
+  `overrides`         table|fn  `{}`            Override any highlight group.
+                              Table or function returning table.
 
-`require('vitesse').colorscheme()`                      *vitesse.colorscheme()*
-  Load the colorscheme. Called by `:colorscheme vitesse`.
+  `integrations`      table     (all `true`)    Toggle plugin integrations.
+    `.telescope`      boolean
+    `.gitsigns`       boolean
+    `.which_key`      boolean
+    `.neo_tree`       boolean
+    `.trouble`        boolean
+    `.noice`          boolean
+    `.flash`          boolean
+    `.notify`         boolean
+    `.render_markdown` boolean
+    `.indent_blankline` boolean
+    `.lspsaga`        boolean
+    `.lazy`           boolean
+    `.mason`          boolean
+    `.dashboard`      boolean
+    `.oil`            boolean
+    `.dap`            boolean
+    `.mini`           boolean
+    `.fidget`         boolean
+    `.navic`          boolean
+    `.illuminate`     boolean
+    `.hop`            boolean
+    `.copilot`        boolean
+    `.aerial`         boolean
+    `.snacks`         boolean
+
+Bufferline integration is built-in (always active). To use it: >lua
+  require('bufferline').setup({
+    highlights = require('vitesse').bufferline.highlights,
+  })
+<
+
+Lualine theme is auto-discovered by path convention. Set your lualine theme
+to `'vitesse'`.
+
+==============================================================================
+5. Palette                                                    *vitesse-palette*
+
+Each variant defines these 30 semantic color keys:
+
+  `editorBackground`           Editor background
+  `sidebarBackground`          Sidebar background
+  `popupBackground`            Popup menu background
+  `floatingWindowBackground`   Floating window background
+  `menuOptionBackground`       Selected menu option
+  `mainText`                   Primary text
+  `emphasisText`               Emphasized text
+  `commandText`                Command text
+  `inactiveText`               Inactive/disabled text
+  `disabledText`               Very dim text
+  `lineNumberText`             Line number gutter
+  `selectedText`               Selected text
+  `inactiveSelectionText`      Inactive selection text
+  `windowBorder`               Window borders
+  `focusedBorder`              Focused borders
+  `emphasizedBorder`           Emphasized borders
+  `syntaxFunction`             Functions, green
+  `syntaxError`                Errors, red
+  `syntaxKeyword`              Keywords, teal
+  `errorText`                  Error text
+  `warningText`                Warning text
+  `linkText`                   Links, teal
+  `commentText`                Comments
+  `stringText`                 Strings
+  `successText`                Success indicators
+  `warningEmphasis`            Warning emphasis, yellow
+  `specialKeyword`             Special keywords, pink
+  `syntaxOperator`             Operators, gray
+  `foregroundEmphasis`         Foreground emphasis
+  `terminalGray`               Terminal gray
+  `blue`                       Blue accent
+
+Some palette entries use 9-character hex (`#RRGGBBAA`) and are alpha-blended
+against the background at load time via `utils.mix()`.
 
 ==============================================================================
 6. Integrations                                          *vitesse-integrations*
@@ -135,12 +199,8 @@ Each variant defines these semantic color keys:
 Built-in integrations (always enabled):
   - bufferline.nvim
   - nvim-cmp
-  - nvim-notify
-  - render-markdown.nvim
-  - indent-blankline.nvim (ibl)
-  - lspsaga.nvim
 
-Toggleable integrations (via `config.integrations`):
+Toggleable integrations (via `config.integrations`, all enabled by default):
   - telescope.nvim
   - gitsigns.nvim
   - which-key.nvim
@@ -148,7 +208,47 @@ Toggleable integrations (via `config.integrations`):
   - trouble.nvim
   - noice.nvim
   - flash.nvim
+  - nvim-notify
+  - render-markdown.nvim
+  - indent-blankline.nvim (ibl)
+  - lspsaga.nvim
+  - lazy.nvim
+  - mason.nvim
+  - dashboard-nvim
+  - oil.nvim
+  - nvim-dap
+  - mini.nvim
+  - fidget.nvim
+  - nvim-navic
+  - vim-illuminate
+  - hop.nvim / leap.nvim
+  - copilot.vim
+  - aerial.nvim
+  - snacks.nvim
 
-Lualine theme is available at `lua/lualine/themes/vitesse.lua`.
+==============================================================================
+7. API                                                            *vitesse-api*
+
+`require('vitesse').setup(values)`                            *vitesse.setup()*
+  Merge user configuration and refresh the color palette.
+  Must be called before `colorscheme()`. See |vitesse-configuration|.
+
+`require('vitesse').colorscheme()`                        *vitesse.colorscheme()*
+  Load the colorscheme. Called by `:colorscheme vitesse`.
+  Clears existing highlights, resolves the palette, sets terminal colors,
+  and applies all highlight groups.
+
+`require('vitesse').get_colors()`                          *vitesse.get_colors()*
+  Returns a table of all resolved palette colors for the current theme.
+  Must be called after `setup()` or `colorscheme()`.
+  >lua
+    local colors = require('vitesse').get_colors()
+    vim.api.nvim_set_hl(0, 'MyGroup', { fg = colors.syntaxFunction })
+<
+
+==============================================================================
+8. License                                                    *vitesse-license*
+
+MIT License.
 
 vim:tw=78:ts=8:ft=help:norl:
