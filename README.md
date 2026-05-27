@@ -227,6 +227,10 @@ local colors = theme.get_colors()
 
 The dev environment uses [direnv](https://direnv.net/) + Nix. Entering the project directory activates the shell automatically. The root `init.lua` bootstraps lazy.nvim and loads the theme for live testing.
 
+## Acknowledgements
+
+This project is a Neovim port of [antfu/vscode-theme-vitesse](https://github.com/antfu/vscode-theme-vitesse), a Visual Studio Code theme created by [Anthony Fu](https://github.com/antfu). The color palette and design language are derived from his original work.
+
 ## License
 
 [MIT](LICENSE)

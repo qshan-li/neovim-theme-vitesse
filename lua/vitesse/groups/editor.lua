@@ -1,11 +1,11 @@
 local M = {}
 
 function M.highlights(c, config, utils)
-  local bg = config.transparent and 'NONE' or c.editorBackground
-  local diff_add = utils.shade(c.successText, 0.5, c.editorBackground)
-  local diff_delete = utils.shade(c.syntaxError, 0.5, c.editorBackground)
-  local diff_change = utils.shade(c.syntaxFunction, 0.5, c.editorBackground)
-  local diff_text = utils.shade(c.warningEmphasis, 0.5, c.editorBackground)
+  local bg = c.transparentBg or c.editorBackground
+  local diff_add_bg = utils.mix(c.successText, c.editorBackground, 0.18)
+  local diff_delete_bg = utils.mix(c.syntaxError, c.editorBackground, 0.18)
+  local diff_change_bg = utils.mix(c.syntaxFunction, c.editorBackground, 0.18)
+  local diff_text_bg = utils.mix(c.syntaxFunction, c.editorBackground, 0.30)
 
   return {
     Normal = { fg = c.mainText, bg = bg },
@@ -20,10 +20,10 @@ function M.highlights(c, config, utils)
     CursorLine = { bg = c.popupBackground },
     CursorColumn = { link = 'CursorLine' },
     Directory = { fg = c.syntaxFunction },
-    DiffAdd = { bg = bg, fg = diff_add },
-    DiffChange = { bg = bg, fg = diff_change },
-    DiffDelete = { bg = bg, fg = diff_delete },
-    DiffText = { bg = bg, fg = diff_text },
+    DiffAdd = { bg = diff_add_bg, fg = c.successText },
+    DiffChange = { bg = diff_change_bg, fg = c.syntaxFunction },
+    DiffDelete = { bg = diff_delete_bg, fg = c.syntaxError },
+    DiffText = { bg = diff_text_bg, fg = c.syntaxFunction },
     EndOfBuffer = { fg = c.syntaxKeyword },
     TermCursor = { link = 'Cursor' },
     TermCursorNC = { link = 'Cursor' },
@@ -111,6 +111,12 @@ function M.highlights(c, config, utils)
     WarningMsg = { fg = c.warningText },
     Whitespace = { fg = c.syntaxOperator },
     WildMenu = { bg = c.menuOptionBackground },
+    MsgSeparator = { fg = c.windowBorder },
+    RedrawDebugClear = { bg = c.warningEmphasis },
+    RedrawDebugComposed = { bg = c.successText },
+    RedrawDebugRecompose = { bg = c.syntaxError },
+    healthSuccess = { fg = c.successText },
+    healthWarning = { fg = c.warningText },
   }
 end
 

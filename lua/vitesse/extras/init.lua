@@ -19,7 +19,7 @@ local palette_keys = {
   'blue',
 }
 
-local variants = { 'dark', 'dark-soft', 'light', 'light-soft' }
+local variants = { 'dark', 'dark-soft', 'black', 'light', 'light-soft' }
 
 function M.get_palette(variant)
   -- load colorscheme fresh for each variant

@@ -25,6 +25,19 @@ local dark_base = {
   foregroundEmphasis = '#bfbaaa',
   terminalGray = '#777777',
   blue = '#6394bf',
+  syntaxVariable = '#bd976a',
+  syntaxNumber = '#4C9A91',
+  syntaxConstant = '#c99076',
+  syntaxClass = '#6872ab',
+  syntaxInterface = '#5d99a9',
+  syntaxType = '#5DA994',
+  syntaxBuiltin = '#cb7676',
+  syntaxProperty = '#b8a965',
+  syntaxNamespace = '#db889a',
+  syntaxDecorator = '#bd8f8f',
+  syntaxRegex = '#c4704f',
+  syntaxCyan = '#5eaab5',
+  syntaxMagenta = '#d9739f',
 }
 
 local light_base = {
@@ -51,6 +64,19 @@ local light_base = {
   foregroundEmphasis = '#4e4f47',
   terminalGray = '#aaaaaa',
   blue = '#296aa3',
+  syntaxVariable = '#b07d48',
+  syntaxNumber = '#2f798a',
+  syntaxConstant = '#a65e2b',
+  syntaxClass = '#5a6aa6',
+  syntaxInterface = '#2e808f',
+  syntaxType = '#2e8f82',
+  syntaxBuiltin = '#ab5959',
+  syntaxProperty = '#998418',
+  syntaxNamespace = '#b05a78',
+  syntaxDecorator = '#bd8f8f',
+  syntaxRegex = '#ab5e3f',
+  syntaxCyan = '#2993a3',
+  syntaxMagenta = '#a13865',
 }
 
 local palettes = {
@@ -73,6 +99,18 @@ local palettes = {
     windowBorder = '#252525',
     focusedBorder = '#292929',
     emphasizedBorder = '#292929',
+  }),
+  black = vim.tbl_extend('force', dark_base, {
+    editorBackground = '#000000',
+    sidebarBackground = '#000000',
+    popupBackground = '#121212',
+    floatingWindowBackground = '#000000',
+    menuOptionBackground = '#121212',
+    windowBorder = '#191919',
+    focusedBorder = '#121212',
+    emphasizedBorder = '#121212',
+    mainText = '#dbd7cacc',
+    syntaxOperator = '#444444',
   }),
   light = vim.tbl_extend('force', light_base, {
     editorBackground = '#ffffff',
@@ -99,7 +137,8 @@ local palettes = {
 local function resolve_theme()
   local theme = config.theme or 'auto'
   if theme == 'auto' then
-    return vim.o.background == 'light' and 'light' or 'dark'
+    theme = vim.g.vitesse_theme
+      or (vim.o.background == 'light' and 'light' or 'dark')
   end
   if palettes[theme] then
     return theme
@@ -128,8 +167,8 @@ local function apply_palette(palette)
     return color
   end
 
-  colorscheme.editorBackground = config.transparent and 'none'
-    or palette.editorBackground
+  colorscheme.editorBackground = palette.editorBackground
+  colorscheme.transparentBg = config.transparent and 'none' or nil
   colorscheme.sidebarBackground = premix(palette.sidebarBackground)
   colorscheme.popupBackground = premix(palette.popupBackground)
   colorscheme.floatingWindowBackground =
@@ -164,6 +203,20 @@ local function apply_palette(palette)
   colorscheme.foregroundEmphasis = premix(palette.foregroundEmphasis)
   colorscheme.terminalGray = premix(palette.terminalGray)
   colorscheme.blue = premix(palette.blue)
+
+  colorscheme.syntaxVariable = premix(palette.syntaxVariable)
+  colorscheme.syntaxNumber = premix(palette.syntaxNumber)
+  colorscheme.syntaxConstant = premix(palette.syntaxConstant)
+  colorscheme.syntaxClass = premix(palette.syntaxClass)
+  colorscheme.syntaxInterface = premix(palette.syntaxInterface)
+  colorscheme.syntaxType = premix(palette.syntaxType)
+  colorscheme.syntaxBuiltin = premix(palette.syntaxBuiltin)
+  colorscheme.syntaxProperty = premix(palette.syntaxProperty)
+  colorscheme.syntaxNamespace = premix(palette.syntaxNamespace)
+  colorscheme.syntaxDecorator = premix(palette.syntaxDecorator)
+  colorscheme.syntaxRegex = premix(palette.syntaxRegex)
+  colorscheme.syntaxCyan = premix(palette.syntaxCyan)
+  colorscheme.syntaxMagenta = premix(palette.syntaxMagenta)
 end
 
 function colorscheme.refresh()

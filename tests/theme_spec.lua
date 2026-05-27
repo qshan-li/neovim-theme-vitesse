@@ -23,8 +23,8 @@ describe('vitesse colorscheme', function()
     assert.is_not_nil(colors.editorBackground)
   end)
 
-  it('all 4 variants load', function()
-    for _, variant in ipairs { 'dark', 'dark-soft', 'light', 'light-soft' } do
+  it('all 5 variants load', function()
+    for _, variant in ipairs { 'dark', 'dark-soft', 'black', 'light', 'light-soft' } do
       assert.has_no.errors(function()
         require('vitesse').setup { theme = variant }
         require('vitesse').colorscheme()

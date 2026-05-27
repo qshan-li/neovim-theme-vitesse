@@ -9,11 +9,11 @@ function M.highlights(c, config, utils)
 
   return {
     Comment = { fg = c.commentText, italic = comment_style.italic },
-    Constant = { fg = c.syntaxError },
+    Constant = { fg = c.syntaxConstant },
     String = { fg = c.stringText, italic = string_style.italic },
     Character = { fg = c.stringText },
     Number = {
-      fg = c.foregroundEmphasis,
+      fg = c.syntaxNumber,
       bold = number_style.bold,
     },
     Boolean = { fg = c.syntaxFunction },
@@ -37,7 +37,7 @@ function M.highlights(c, config, utils)
     Define = { fg = c.syntaxKeyword },
     Macro = { link = 'Define' },
     PreCondit = { fg = c.syntaxError },
-    Type = { fg = c.syntaxKeyword },
+    Type = { fg = c.syntaxType },
     Struct = { link = 'Type' },
     Class = { link = 'Type' },
     Attribute = { link = 'Character' },
@@ -45,6 +45,7 @@ function M.highlights(c, config, utils)
     Special = { fg = c.syntaxOperator },
     SpecialChar = { fg = c.syntaxError },
     Tag = { fg = c.stringText },
+    Regex = { fg = c.syntaxRegex },
     Delimiter = { fg = c.syntaxOperator },
     Debug = { fg = c.specialKeyword },
     Underlined = { underline = not config.no_underline },

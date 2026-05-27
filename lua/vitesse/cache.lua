@@ -9,6 +9,8 @@ end
 function M.get_key(config)
   local parts = {
     config.theme or 'auto',
+    vim.g.vitesse_theme or '',
+    vim.o.background,
     tostring(config.transparent),
     tostring(config.dim_inactive),
     tostring(config.no_italic),
