@@ -1,2 +1,2 @@
-vim.o.background = "light"
-require("vitesse").colorscheme()
+vim.o.background = 'light'
+require('vitesse').colorscheme()

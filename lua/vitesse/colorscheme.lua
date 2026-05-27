@@ -168,11 +168,12 @@ local function apply_palette(palette)
     return color
   end
 
-  colorscheme.editorBackground =
-    config.transparent and 'none' or palette.editorBackground
+  colorscheme.editorBackground = config.transparent and 'none'
+    or palette.editorBackground
   colorscheme.sidebarBackground = premix(palette.sidebarBackground)
   colorscheme.popupBackground = premix(palette.popupBackground)
-  colorscheme.floatingWindowBackground = premix(palette.floatingWindowBackground)
+  colorscheme.floatingWindowBackground =
+    premix(palette.floatingWindowBackground)
   colorscheme.menuOptionBackground = premix(palette.menuOptionBackground)
 
   colorscheme.mainText = premix(palette.mainText)
@@ -207,6 +208,11 @@ end
 
 function colorscheme.refresh()
   local palette = palettes[resolve_theme()]
+
+  if config.on_colors then
+    config.on_colors(palette)
+  end
+
   apply_palette(palette)
   return colorscheme
 end

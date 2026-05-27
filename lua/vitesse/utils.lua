@@ -47,5 +47,12 @@ function M.shade(color, value, base)
   end
 end
 
-return M
+function M.lighten(color, amount)
+  return M.mix(color, '#ffffff', amount)
+end
 
+function M.darken(color, amount)
+  return M.mix(color, '#000000', amount)
+end
+
+return M

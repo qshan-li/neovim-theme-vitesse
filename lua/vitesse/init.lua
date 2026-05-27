@@ -1,8 +1,23 @@
-local bufferline = require 'vitesse.integrations.bufferline'
-local cmp = require 'vitesse.integrations.cmp'
 local colorscheme = require 'vitesse.colorscheme'
 local config = require 'vitesse.config'
 local utils = require 'vitesse.utils'
+
+local diagnostic = require 'vitesse.groups.diagnostic'
+local editor = require 'vitesse.groups.editor'
+local lsp = require 'vitesse.groups.lsp'
+local syntax = require 'vitesse.groups.syntax'
+local treesitter = require 'vitesse.groups.treesitter'
+
+local bufferline = require 'vitesse.integrations.bufferline'
+local cmp = require 'vitesse.integrations.cmp'
+local flash = require 'vitesse.integrations.flash'
+local gitsigns = require 'vitesse.integrations.gitsigns'
+local neo_tree = require 'vitesse.integrations.neo-tree'
+local noice = require 'vitesse.integrations.noice'
+local telescope = require 'vitesse.integrations.telescope'
+local trouble = require 'vitesse.integrations.trouble'
+local which_key = require 'vitesse.integrations.which-key'
+
 local theme = {}
 
 local function set_terminal_colors()
@@ -27,385 +42,38 @@ local function set_terminal_colors()
 end
 
 local function set_groups()
-  local bg = config.transparent and 'NONE' or colorscheme.editorBackground
-  local diff_add =
-    utils.shade(colorscheme.successText, 0.5, colorscheme.editorBackground)
-  local diff_delete =
-    utils.shade(colorscheme.syntaxError, 0.5, colorscheme.editorBackground)
-  local diff_change =
-    utils.shade(colorscheme.syntaxFunction, 0.5, colorscheme.editorBackground)
-  local diff_text =
-    utils.shade(colorscheme.warningEmphasis, 0.5, colorscheme.editorBackground)
-  local indent_guide = utils.mix(
-    colorscheme.syntaxOperator,
-    colorscheme.editorBackground,
-    0.22
+  local groups = vim.tbl_extend(
+    'force',
+    editor.highlights(colorscheme, config, utils),
+    syntax.highlights(colorscheme, config, utils)
   )
-  local indent_guide_context = utils.mix(
-    colorscheme.syntaxOperator,
-    colorscheme.editorBackground,
-    0.10
+  groups = vim.tbl_extend(
+    'force',
+    groups,
+    treesitter.highlights(colorscheme, config, utils)
   )
+  groups =
+    vim.tbl_extend('force', groups, lsp.highlights(colorscheme, config, utils))
+  groups = vim.tbl_extend('force', groups, diagnostic.highlights(colorscheme))
 
-  local groups = {
-    -- base
-    Normal = { fg = colorscheme.mainText, bg = bg },
-    LineNr = { fg = colorscheme.lineNumberText },
-    ColorColumn = {
-      bg = utils.shade(colorscheme.linkText, 0.5, colorscheme.editorBackground),
-    },
-    Conceal = {},
-    Cursor = { fg = colorscheme.editorBackground, bg = colorscheme.mainText },
-    lCursor = { link = 'Cursor' },
-    CursorIM = { link = 'Cursor' },
-    CursorLine = { bg = colorscheme.popupBackground },
-    CursorColumn = { link = 'CursorLine' },
-    Directory = { fg = colorscheme.syntaxFunction },
-    DiffAdd = { bg = bg, fg = diff_add },
-    DiffChange = { bg = bg, fg = diff_change },
-    DiffDelete = { bg = bg, fg = diff_delete },
-    DiffText = { bg = bg, fg = diff_text },
-    EndOfBuffer = { fg = colorscheme.syntaxKeyword },
-    TermCursor = { link = 'Cursor' },
-    TermCursorNC = { link = 'Cursor' },
-    ErrorMsg = { fg = colorscheme.syntaxError },
-    VertSplit = { fg = colorscheme.windowBorder, bg = bg },
-    Winseparator = { link = 'VertSplit' },
-    SignColumn = { link = 'Normal' },
-    Folded = { fg = colorscheme.mainText, bg = colorscheme.popupBackground },
-    FoldColumn = { link = 'SignColumn' },
-    IncSearch = {
-      bg = utils.mix(
-        colorscheme.syntaxFunction,
-        colorscheme.editorBackground,
-        math.abs(0.30)
-      ),
-      fg = colorscheme.editorBackground,
-    },
-    Substitute = { link = 'IncSearch' },
-    CursorLineNr = { fg = colorscheme.commentText },
-    MatchParen = { fg = colorscheme.syntaxError, bg = bg },
-    ModeMsg = { link = 'Normal' },
-    MsgArea = { link = 'Normal' },
-    -- MsgSeparator = {},
-    MoreMsg = { fg = colorscheme.syntaxFunction },
-    NonText = { fg = utils.shade(colorscheme.editorBackground, 0.30) },
-    NormalFloat = { bg = colorscheme.floatingWindowBackground },
-    SagaNormal = {
-      fg = colorscheme.mainText,
-      bg = colorscheme.popupBackground,
-    },
-    SagaBorder = { fg = colorscheme.windowBorder, bg = colorscheme.popupBackground },
-    HoverNormal = { link = 'SagaNormal' },
-    HoverBorder = { link = 'SagaBorder' },
-    ActionPreviewNormal = { link = 'SagaNormal' },
-    ActionPreviewBorder = { link = 'SagaBorder' },
-    DiagnosticNormal = { link = 'SagaNormal' },
-    DiagnosticBorder = { link = 'SagaBorder' },
-    DiagnosticShowNormal = { link = 'SagaNormal' },
-    DiagnosticShowBorder = { link = 'SagaBorder' },
-    TerminalNormal = { link = 'SagaNormal' },
-    TerminalBorder = { link = 'SagaBorder' },
-    NormalNC = { link = 'Normal' },
-    Pmenu = { link = 'NormalFloat' },
-    PmenuSel = { bg = colorscheme.menuOptionBackground },
-    PmenuSbar = {
-      bg = utils.shade(
-        colorscheme.syntaxFunction,
-        0.5,
-        colorscheme.editorBackground
-      ),
-    },
-    PmenuThumb = { bg = utils.shade(colorscheme.editorBackground, 0.20) },
-    Question = { fg = colorscheme.syntaxFunction },
-    QuickFixLine = { fg = colorscheme.syntaxFunction },
-    SpecialKey = { fg = colorscheme.syntaxOperator },
-    StatusLine = { fg = colorscheme.mainText, bg = bg },
-    StatusLineNC = {
-      fg = colorscheme.inactiveText,
-      bg = colorscheme.sidebarBackground,
-    },
-    WinBar = { fg = colorscheme.selectedText, bg = bg },
-    WinBarNC = { fg = colorscheme.inactiveText, bg = bg },
-    TabLine = {
-      bg = colorscheme.sidebarBackground,
-      fg = colorscheme.inactiveText,
-    },
-    TabLineFill = { link = 'TabLine' },
-    TabLineSel = {
-      bg = colorscheme.editorBackground,
-      fg = colorscheme.emphasisText,
-    },
-    Search = { bg = utils.shade(colorscheme.stringText, 0.40, colorscheme.bg) },
-    SpellBad = { undercurl = true, sp = colorscheme.syntaxError },
-    SpellCap = { undercurl = true, sp = colorscheme.syntaxFunction },
-    SpellLocal = { undercurl = true, sp = colorscheme.syntaxKeyword },
-    SpellRare = { undercurl = true, sp = colorscheme.warningText },
-    Title = { fg = colorscheme.syntaxFunction },
-    Visual = {
-      bg = utils.shade(
-        colorscheme.syntaxFunction,
-        0.40,
-        colorscheme.editorBackground
-      ),
-    },
-    VisualNOS = { link = 'Visual' },
-    WarningMsg = { fg = colorscheme.warningText },
-    Whitespace = { fg = colorscheme.syntaxOperator },
-    -- indent guides (indent-blankline/ibl)
-    IndentBlanklineChar = { fg = indent_guide, nocombine = true },
-    IndentBlanklineContextChar = { fg = colorscheme.blue, nocombine = true },
-    IndentBlanklineContextStart = { sp = colorscheme.blue, underline = true },
-    IblIndent = { fg = indent_guide, nocombine = true },
-    IblWhitespace = { fg = indent_guide, nocombine = true },
-    IblScope = { fg = colorscheme.blue, nocombine = true },
-    WildMenu = { bg = colorscheme.menuOptionBackground },
-    Comment = {
-      fg = colorscheme.commentText,
-      italic = config.italics.comments or false,
-    },
-
-    Constant = { fg = colorscheme.syntaxError },
-    String = {
-      fg = colorscheme.stringText,
-      italic = config.italics.strings or false,
-    },
-    Character = { fg = colorscheme.stringText },
-    Number = { fg = colorscheme.foregroundEmphasis, bold = true },
-    Boolean = { fg = colorscheme.syntaxFunction },
-    Float = { link = 'Number' },
-
-    Identifier = { fg = colorscheme.mainText },
-    Function = { fg = colorscheme.syntaxKeyword },
-    Method = { fg = colorscheme.syntaxKeyword },
-    Property = { fg = colorscheme.syntaxFunction },
-    Field = { link = 'Property' },
-    Parameter = { fg = colorscheme.mainText },
-    Statement = { fg = colorscheme.syntaxError },
-    Conditional = { fg = colorscheme.syntaxError },
-    -- Repeat = {},
-    Label = { fg = colorscheme.syntaxFunction },
-    Operator = { fg = colorscheme.syntaxError },
-    Keyword = { link = 'Statement', italic = config.italics.keywords or false },
-    Exception = { fg = colorscheme.syntaxError },
-
-    PreProc = { link = 'Keyword' },
-    -- Include = {},
-    Define = { fg = colorscheme.syntaxKeyword },
-    Macro = { link = 'Define' },
-    PreCondit = { fg = colorscheme.syntaxError },
-
-    Type = { fg = colorscheme.syntaxKeyword },
-    Struct = { link = 'Type' },
-    Class = { link = 'Type' },
-
-    -- StorageClass = {},
-    -- Structure = {},
-    -- Typedef = {},
-
-    Attribute = { link = 'Character' },
-    Punctuation = { fg = colorscheme.syntaxOperator },
-    Special = { fg = colorscheme.syntaxOperator },
-
-    SpecialChar = { fg = colorscheme.syntaxError },
-    Tag = { fg = colorscheme.stringText },
-    Delimiter = { fg = colorscheme.syntaxOperator },
-    -- SpecialComment = {},
-    Debug = { fg = colorscheme.specialKeyword },
-
-    Underlined = { underline = true },
-    Bold = { bold = true },
-    Italic = { italic = true },
-    Ignore = { fg = colorscheme.editorBackground },
-    Error = { link = 'ErrorMsg' },
-    Todo = { fg = colorscheme.warningText, bold = true },
-
-    -- LspReferenceText = {},
-    -- LspReferenceRead = {},
-    -- LspReferenceWrite = {},
-    -- LspCodeLens = {},
-    -- LspCodeLensSeparator = {},
-    -- LspSignatureActiveParameter = {},
-
-    DiagnosticError = { link = 'Error' },
-    DiagnosticWarn = { link = 'WarningMsg' },
-    DiagnosticInfo = { fg = colorscheme.syntaxFunction },
-    DiagnosticHint = { fg = colorscheme.warningEmphasis },
-    DiagnosticVirtualTextError = { link = 'DiagnosticError' },
-    DiagnosticVirtualTextWarn = { link = 'DiagnosticWarn' },
-    DiagnosticVirtualTextInfo = { link = 'DiagnosticInfo' },
-    DiagnosticVirtualTextHint = { link = 'DiagnosticHint' },
-    DiagnosticUnderlineError = { undercurl = true, link = 'DiagnosticError' },
-    DiagnosticUnderlineWarn = { undercurl = true, link = 'DiagnosticWarn' },
-    DiagnosticUnderlineInfo = { undercurl = true, link = 'DiagnosticInfo' },
-    DiagnosticUnderlineHint = { undercurl = true, link = 'DiagnosticHint' },
-    -- DiagnosticFloatingError = {},
-    -- DiagnosticFloatingWarn = {},
-    -- DiagnosticFloatingInfo = {},
-    -- DiagnosticFloatingHint = {},
-    -- DiagnosticSignError = {},
-    -- DiagnosticSignWarn = {},
-    -- DiagnosticSignInfo = {},
-    -- DiagnosticSignHint = {},
-
-    -- Tree-Sitter groups are defined with an "@" symbol, which must be
-    -- specially handled to be valid lua code, we do this via the special
-    -- sym function. The following are all valid ways to call the sym function,
-    -- for more details see https://www.lua.org/pil/5.html
-    --
-    -- sym("@text.literal")
-    -- sym('@text.literal')
-    -- sym"@text.literal"
-    -- sym'@text.literal'
-    --
-    -- For more information see https://github.com/rktjmp/lush.nvim/issues/109
-
-    ['@text'] = { fg = colorscheme.mainText },
-    ['@texcolorscheme.literal'] = { link = 'Property' },
-    -- ["@texcolorscheme.reference"] = {},
-    ['@texcolorscheme.strong'] = { link = 'Bold' },
-    ['@texcolorscheme.italic'] = { link = 'Italic' },
-    ['@texcolorscheme.title'] = { link = 'Keyword' },
-    ['@texcolorscheme.uri'] = {
-      fg = colorscheme.syntaxFunction,
-      sp = colorscheme.syntaxFunction,
-      underline = true,
-    },
-    ['@texcolorscheme.underline'] = { link = 'Underlined' },
-    ['@symbol'] = { fg = colorscheme.syntaxOperator },
-    ['@texcolorscheme.todo'] = { link = 'Todo' },
-    ['@comment'] = { link = 'Comment' },
-    ['@punctuation'] = { link = 'Punctuation' },
-    ['@punctuation.bracket'] = { fg = colorscheme.warningEmphasis },
-    ['@punctuation.delimiter'] = { fg = colorscheme.syntaxError },
-    ['@punctuation.terminator.statement'] = { link = 'Delimiter' },
-    ['@punctuation.special'] = { fg = colorscheme.syntaxError },
-    ['@punctuation.separator.keyvalue'] = { fg = colorscheme.syntaxError },
-
-    ['@texcolorscheme.diff.add'] = { fg = colorscheme.successText },
-    ['@texcolorscheme.diff.delete'] = { fg = colorscheme.errorText },
-
-    ['@constant'] = { link = 'Constant' },
-    ['@constant.builtin'] = { fg = colorscheme.syntaxFunction },
-    ['@constancolorscheme.builtin'] = { link = 'Keyword' },
-    -- ["@constancolorscheme.macro"] = {},
-    -- ["@define"] = {},
-    -- ["@macro"] = {},
-    ['@string'] = { link = 'String' },
-    ['@string.escape'] = { fg = utils.shade(colorscheme.stringText, 0.45) },
-    ['@string.special'] = { fg = utils.shade(colorscheme.syntaxFunction, 0.45) },
-    -- ["@character"] = {},
-    -- ["@character.special"] = {},
-    ['@number'] = { link = 'Number' },
-    ['@boolean'] = { link = 'Boolean' },
-    -- ["@float"] = {},
-    ['@function'] = {
-      link = 'Function',
-      italic = config.italics.functions or false,
-    },
-    ['@function.call'] = { link = 'Function' },
-    ['@function.builtin'] = { link = 'Function' },
-    -- ["@function.macro"] = {},
-    ['@parameter'] = { link = 'Parameter' },
-    ['@method'] = { link = 'Function' },
-    ['@field'] = { link = 'Property' },
-    ['@property'] = { link = 'Property' },
-    ['@constructor'] = { fg = colorscheme.syntaxFunction },
-    -- ["@conditional"] = {},
-    -- ["@repeat"] = {},
-    ['@label'] = { link = 'Label' },
-    ['@operator'] = { link = 'Operator' },
-    ['@exception'] = { link = 'Exception' },
-    ['@variable'] = {
-      fg = colorscheme.syntaxFunction,
-      italic = config.italics.variables or false,
-    },
-    ['@variable.builtin'] = { fg = colorscheme.syntaxFunction },
-    ['@variable.member'] = { fg = colorscheme.mainText },
-    ['@variable.parameter'] = {
-      fg = colorscheme.mainText,
-      italic = config.italics.variables or false,
-    },
-    ['@type'] = { link = 'Type' },
-    ['@type.definition'] = { fg = colorscheme.mainText },
-    ['@type.builtin'] = { fg = colorscheme.syntaxFunction },
-    ['@type.qualifier'] = { fg = colorscheme.syntaxFunction },
-    ['@keyword'] = { link = 'Keyword' },
-    -- ["@storageclass"] = {},
-    -- ["@structure"] = {},
-    ['@namespace'] = { link = 'Type' },
-    ['@annotation'] = { link = 'Label' },
-    -- ["@include"] = {},
-    -- ["@preproc"] = {},
-    ['@debug'] = { fg = colorscheme.specialKeyword },
-    ['@tag'] = { link = 'Tag' },
-    ['@tag.builtin'] = { link = 'Tag' },
-    ['@tag.delimiter'] = { fg = colorscheme.syntaxOperator },
-    ['@tag.attribute'] = { fg = colorscheme.syntaxKeyword },
-    ['@tag.jsx.element'] = { fg = colorscheme.syntaxFunction },
-    ['@attribute'] = { fg = colorscheme.syntaxKeyword },
-    ['@error'] = { link = 'Error' },
-    ['@warning'] = { link = 'WarningMsg' },
-    ['@info'] = { fg = colorscheme.syntaxFunction },
-
-    -- Specific languages
-    -- overrides
-    ['@label.json'] = { fg = colorscheme.property }, -- For json
-    ['@label.help'] = { link = '@texcolorscheme.uri' }, -- For help files
-    ['@texcolorscheme.uri.html'] = { underline = true }, -- For html
-
-    -- markdown/code blocks should not force a background color
-    ['@markup.raw'] = { bg = 'NONE' },
-    ['@markup.raw.block'] = { bg = 'NONE' },
-    ['@text.literal'] = { bg = 'NONE' },
-    ['@text.literal.block'] = { bg = 'NONE' },
-    markdownCode = { bg = 'NONE' },
-    markdownCodeBlock = { bg = 'NONE' },
-    markdownCodeDelimiter = { bg = 'NONE' },
-    markdownCodeInline = { bg = 'NONE' },
-    RenderMarkdownCode = { fg = colorscheme.mainText, bg = 'NONE' },
-    RenderMarkdownCodeBorder = { bg = 'NONE' },
-    RenderMarkdownCodeInfo = { fg = colorscheme.inactiveText, bg = 'NONE' },
-    RenderMarkdownCodeFallback = { bg = 'NONE' },
-    RenderMarkdownCodeInline = { fg = colorscheme.mainText, bg = 'NONE' },
-    RenderMarkdownInlineHighlight = { bg = 'NONE' },
-    NotifyBackground = { bg = colorscheme.floatingWindowBackground },
-    NotifyINFOIcon = { fg = colorscheme.syntaxFunction },
-    NotifyINFOTitle = { fg = colorscheme.syntaxFunction },
-    NotifyINFOBody = { fg = colorscheme.mainText },
-    NotifyWARNIcon = { fg = colorscheme.warningText },
-    NotifyWARNTitle = { fg = colorscheme.warningText },
-    NotifyWARNBody = { fg = colorscheme.mainText },
-    NotifyERRORIcon = { fg = colorscheme.syntaxError },
-    NotifyERRORTitle = { fg = colorscheme.syntaxError },
-    NotifyERRORBody = { fg = colorscheme.mainText },
-    NotifyDEBUGIcon = { fg = colorscheme.syntaxOperator },
-    NotifyDEBUGTitle = { fg = colorscheme.syntaxOperator },
-    NotifyDEBUGBody = { fg = colorscheme.mainText },
-    NotifyTRACEIcon = { fg = colorscheme.linkText },
-    NotifyTRACETitle = { fg = colorscheme.linkText },
-    NotifyTRACEBody = { fg = colorscheme.mainText },
-
-    -- semantic highlighting
-    ['@lsp.type.namespace'] = { link = '@namespace' },
-    ['@lsp.type.type'] = { link = '@type' },
-    ['@lsp.type.class'] = { link = '@type' },
-    ['@lsp.type.enum'] = { link = '@type' },
-    ['@lsp.type.enumMember'] = { fg = colorscheme.syntaxFunction },
-    ['@lsp.type.interface'] = { link = '@type' },
-    ['@lsp.type.struct'] = { link = '@type' },
-    ['@lsp.type.parameter'] = { link = '@parameter' },
-    ['@lsp.type.property'] = { link = '@text' },
-    ['@lsp.type.function'] = { link = '@function' },
-    ['@lsp.type.method'] = { link = '@method' },
-    ['@lsp.type.macro'] = { link = '@label' },
-    ['@lsp.type.decorator'] = { link = '@label' },
-    ['@lsp.typemod.function.declaration'] = { link = '@function' },
-    ['@lsp.typemod.function.readonly'] = { link = '@function' },
-  }
-
-  -- integrations
+  -- built-in integrations (no toggle)
   groups = vim.tbl_extend('force', groups, cmp.highlights())
+
+  -- toggleable integrations
+  local integrations = {
+    { name = 'telescope', mod = telescope },
+    { name = 'gitsigns', mod = gitsigns },
+    { name = 'which_key', mod = which_key },
+    { name = 'neo_tree', mod = neo_tree },
+    { name = 'trouble', mod = trouble },
+    { name = 'noice', mod = noice },
+    { name = 'flash', mod = flash },
+  }
+  for _, integration in ipairs(integrations) do
+    if config.integrations and config.integrations[integration.name] then
+      groups = vim.tbl_extend('force', groups, integration.mod.highlights())
+    end
+  end
 
   -- overrides
   groups = vim.tbl_extend(
@@ -452,8 +120,20 @@ function theme.colorscheme()
   vim.g.colors_name = 'vitesse'
 
   colorscheme.refresh()
-  set_terminal_colors()
+  if config.terminal_colors then
+    set_terminal_colors()
+  end
   set_groups()
+end
+
+function theme.get_colors()
+  local colors = {}
+  for k, v in pairs(colorscheme) do
+    if type(v) == 'string' then
+      colors[k] = v
+    end
+  end
+  return colors
 end
 
 return theme

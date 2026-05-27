@@ -1,1 +1,1 @@
-require("vitesse").colorscheme()
+require('vitesse').colorscheme()

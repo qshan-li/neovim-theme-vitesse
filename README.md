@@ -1,6 +1,6 @@
-# Neovim Colorscheme Template
+# Vitesse for Neovim
 
-This aims to make your life a lot easier when creating your colorscheme. You should change change colors, names and do a bit of fine tuning for your specific needs! If you like the project, leave a star here.
+Neovim colorscheme port of [antfu/vscode-theme-vitesse](https://github.com/antfu/vscode-theme-vitesse). Four variants: `dark`, `dark-soft`, `light`, `light-soft`.
 
 ## Contributing
 

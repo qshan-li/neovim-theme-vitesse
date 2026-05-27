@@ -1,0 +1,47 @@
+local M = {}
+
+function M.highlights(c, config, utils)
+  return {
+    Comment = { fg = c.commentText, italic = config.italics.comments or false },
+    Constant = { fg = c.syntaxError },
+    String = { fg = c.stringText, italic = config.italics.strings or false },
+    Character = { fg = c.stringText },
+    Number = { fg = c.foregroundEmphasis, bold = true },
+    Boolean = { fg = c.syntaxFunction },
+    Float = { link = 'Number' },
+    Identifier = { fg = c.mainText },
+    Function = { fg = c.syntaxKeyword },
+    Method = { fg = c.syntaxKeyword },
+    Property = { fg = c.syntaxFunction },
+    Field = { link = 'Property' },
+    Parameter = { fg = c.mainText },
+    Statement = { fg = c.syntaxError },
+    Conditional = { fg = c.syntaxError },
+    Label = { fg = c.syntaxFunction },
+    Operator = { fg = c.syntaxError },
+    Keyword = { link = 'Statement', italic = config.italics.keywords or false },
+    Exception = { fg = c.syntaxError },
+    PreProc = { link = 'Keyword' },
+    Define = { fg = c.syntaxKeyword },
+    Macro = { link = 'Define' },
+    PreCondit = { fg = c.syntaxError },
+    Type = { fg = c.syntaxKeyword },
+    Struct = { link = 'Type' },
+    Class = { link = 'Type' },
+    Attribute = { link = 'Character' },
+    Punctuation = { fg = c.syntaxOperator },
+    Special = { fg = c.syntaxOperator },
+    SpecialChar = { fg = c.syntaxError },
+    Tag = { fg = c.stringText },
+    Delimiter = { fg = c.syntaxOperator },
+    Debug = { fg = c.specialKeyword },
+    Underlined = { underline = true },
+    Bold = { bold = true },
+    Italic = { italic = true },
+    Ignore = { fg = c.editorBackground },
+    Error = { link = 'ErrorMsg' },
+    Todo = { fg = c.warningText, bold = true },
+  }
+end
+
+return M

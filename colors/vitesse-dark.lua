@@ -1,2 +1,2 @@
-vim.o.background = "dark"
-require("vitesse").colorscheme()
+vim.o.background = 'dark'
+require('vitesse').colorscheme()
