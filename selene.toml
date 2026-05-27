@@ -1,0 +1,6 @@
+std = "lua51"
+
+[config]
+empty_if = "allow"
+unused_variable = "warn"
+global_usage = "allow"
