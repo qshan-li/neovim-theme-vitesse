@@ -249,9 +249,10 @@ function theme.colorscheme()
 
   vim.g.VM_theme_set_by_colorscheme = true
   vim.o.termguicolors = true
-  vim.g.colors_name = 'vitesse'
 
   colorscheme.refresh()
+  vim.g.colors_name = colorscheme.variant == 'dark' and 'vitesse'
+    or ('vitesse-' .. colorscheme.variant)
   if config.terminal_colors then
     set_terminal_colors()
   end

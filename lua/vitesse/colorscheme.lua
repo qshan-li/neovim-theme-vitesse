@@ -220,7 +220,9 @@ local function apply_palette(palette)
 end
 
 function colorscheme.refresh()
-  local palette = palettes[resolve_theme()]
+  local variant = resolve_theme()
+  colorscheme.variant = variant
+  local palette = palettes[variant]
 
   if config.on_colors then
     config.on_colors(palette)
