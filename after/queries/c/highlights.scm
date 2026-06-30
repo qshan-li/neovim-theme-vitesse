@@ -2,6 +2,6 @@
 (initializer_pair
   ":" @punctuation.separator.keyvalue)
 
-(enum_specifier
+(enumerator_list
   "{" @punctuation.bracket
   "}" @punctuation.bracket)

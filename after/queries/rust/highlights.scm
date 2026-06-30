@@ -2,7 +2,7 @@
 (field_initializer
   ":" @punctuation.separator.keyvalue)
 
-(struct_field
+(field_declaration
   ":" @punctuation.separator.keyvalue)
 
 (macro_invocation

@@ -2,7 +2,7 @@
 (initializer_pair
   ":" @punctuation.separator.keyvalue)
 
-(lambda_capture
+(lambda_capture_specifier
   "," @punctuation.separator)
 
 (template_argument_list

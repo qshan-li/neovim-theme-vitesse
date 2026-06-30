@@ -1,5 +1,5 @@
 ; extends
-(dictionary
+(pair
   ":" @punctuation.separator.keyvalue)
 
 (dictionary_splat_pattern
