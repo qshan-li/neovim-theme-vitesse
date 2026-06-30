@@ -2,6 +2,32 @@ local M = {}
 
 local cache_dir = vim.fn.stdpath 'data' .. '/vitesse'
 
+-- Content hash of all plugin source files. Folded into the cache key so that
+-- any plugin update changes the key and a stale cache is never served.
+local source_digest
+do
+  local src_dir = debug.getinfo(1, 'S').source:sub(2):match '(.*)/'
+  if src_dir and vim.fn.isdirectory(src_dir) == 1 then
+    local files = vim.fs.find(function(name)
+      return name:sub(-4) == '.lua'
+    end, { path = src_dir, limit = math.huge })
+    table.sort(files)
+    local hash = 0
+    for _, f in ipairs(files) do
+      local fh = io.open(f, 'r')
+      if fh then
+        local content = fh:read '*a'
+        fh:close()
+        for i = 1, #content do
+          hash = (hash * 31 + string.byte(content, i)) % 0x100000000
+        end
+      end
+    end
+    source_digest = string.format('%08x', hash)
+  end
+end
+source_digest = source_digest or 'unknown'
+
 function M.get_path()
   return cache_dir
 end
@@ -68,6 +94,7 @@ function M.get_key(config)
       )
     end
   end
+  table.insert(parts, 'src:' .. source_digest)
   local raw = table.concat(parts, '|')
   -- simple hash
   local hash = 0
