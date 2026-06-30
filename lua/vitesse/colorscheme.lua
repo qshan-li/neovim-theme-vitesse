@@ -222,7 +222,7 @@ end
 function colorscheme.refresh()
   local variant = resolve_theme()
   colorscheme.variant = variant
-  local palette = palettes[variant]
+  local palette = vim.deepcopy(palettes[variant])
 
   if config.on_colors then
     config.on_colors(palette)
