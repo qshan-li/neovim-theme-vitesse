@@ -231,7 +231,8 @@ function theme.setup(values)
   theme.bufferline.highlights = bufferline.highlights(config)
 end
 
-function theme.colorscheme()
+function theme.colorscheme(opts)
+  opts = opts or {}
   local v = vim.version()
   if v.major == 0 and v.minor < 8 then
     vim.notify(
@@ -242,8 +243,15 @@ function theme.colorscheme()
     return false
   end
 
+  if not opts.from_cmd then
+    vim.api.nvim_exec_autocmds(
+      'ColorSchemePre',
+      { data = 'vitesse', modeline = false }
+    )
+  end
+
   vim.api.nvim_command 'hi clear'
-  if vim.fn.exists 'syntax_on' then
+  if vim.fn.exists 'syntax_on' ~= 0 then
     vim.api.nvim_command 'syntax reset'
   end
 
@@ -257,7 +265,14 @@ function theme.colorscheme()
     set_terminal_colors()
   end
 
-  return set_groups()
+  local ok = set_groups()
+  if not opts.from_cmd then
+    vim.api.nvim_exec_autocmds(
+      'ColorScheme',
+      { data = vim.g.colors_name, modeline = false }
+    )
+  end
+  return ok
 end
 
 function theme.get_colors()
